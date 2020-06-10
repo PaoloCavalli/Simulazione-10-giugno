@@ -88,7 +88,8 @@ public class ImdbDAO {
 	}
 	public List<String> getGenere(){
 		String sql =" SELECT DISTINCT  genre " + 
-				"FROM movies_genres";
+				"FROM movies_genres " +
+				"ORDER BY genre ASC ";
 		List<String> genere = new ArrayList<String>();
 		
 		Connection conn = DBConnect.getConnection();

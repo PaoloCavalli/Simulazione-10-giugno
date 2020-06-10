@@ -32,6 +32,7 @@ public class Model {
 		return this.dao.getGenere();
 	}
 	public void creaGrafo(String genere) {
+		
 		 grafo = new SimpleWeightedGraph<>(DefaultWeightedEdge.class);
 		 
 		 Graphs.addAllVertices(this.grafo, this.dao.getVertici(genere, idMap));
@@ -44,6 +45,7 @@ public class Model {
 			 }
 			 
 		 }
+		 idMap.clear();
 		 
 	}
 	public List<Actor> getVertici(){
@@ -67,6 +69,7 @@ public class Model {
 		
 		ConnectivityInspector<Actor, DefaultWeightedEdge> ci = new ConnectivityInspector<Actor, DefaultWeightedEdge> (grafo);
 		List<Actor> attoriConnessi = new ArrayList<>(ci.connectedSetOf(sorgente)); 
+		attoriConnessi.remove(sorgente);
 		return attoriConnessi;
 		
 	}

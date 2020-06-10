@@ -59,6 +59,7 @@ public class FXMLController {
      List<Actor> attori= this.model.getAttoriConnessi(attore);
      Collections.sort(attori);
      txtResult.appendText("ATTORI SIMILI A: ");
+     txtResult.appendText(attore.toString()+"\n");
      for(Actor a : attori) {
     	txtResult.appendText(a.toString()+"\n"); 
      }
