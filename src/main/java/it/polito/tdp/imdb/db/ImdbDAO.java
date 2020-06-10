@@ -6,7 +6,10 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+
 import it.polito.tdp.imdb.model.Actor;
+import it.polito.tdp.imdb.model.Adiacenza;
 import it.polito.tdp.imdb.model.Director;
 import it.polito.tdp.imdb.model.Movie;
 
@@ -106,6 +109,70 @@ public class ImdbDAO {
 			return null;
 		}
 		
+	}
+	public List<Actor> getVertici(String genere, Map<Integer,Actor> idMap ){
+		String sql="SELECT a1.id, a1.first_name, a1.last_name, a1.gender " + 
+				"FROM roles r1,movies m1, movies_genres mg1,actors a1 " + 
+				"WHERE r1.movie_id=m1.id  AND a1.id=r1.actor_id  AND m1.id= mg1.movie_id AND mg1.genre=? " + 
+				"GROUP BY r1.actor_id";
+		List<Actor> attori = new ArrayList<Actor>();
+		
+		Connection conn = DBConnect.getConnection();
+        
+		try {
+			PreparedStatement st = conn.prepareStatement(sql);
+		    st.setString(1, genere);
+		    ResultSet res = st.executeQuery();
+		    
+		    while (res.next()) {
+		    	if(!idMap.containsKey(res.getInt("a1.id"))) {
+		    		Actor actor = new Actor(res.getInt("a1.id"), res.getString("a1.first_name"), res.getString("a1.last_name"),
+							res.getString("a1.gender"));
+		    		idMap.put(actor.getId(), actor);
+		    		attori.add(actor);
+		    	}
+		    	else {
+		    		attori.add(idMap.get(res.getInt("a1.id")));
+		    	}
+		    	
+		    }
+		    conn.close();
+		    return attori;
+		    
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+	
+	public List<Adiacenza> getAdiacenze(String genere ,Map<Integer,Actor> idMap ){
+		
+		String sql="SELECT r1.actor_id, r2.actor_id, COUNT(*) AS peso " + 
+				"from roles r1, roles r2, movies m1, movies_genres mg1 " + 
+				"WHERE r1.movie_id=r2.movie_id AND r1.actor_id> r2.actor_id AND r1.movie_id=m1.id AND m1.id= mg1.movie_id AND mg1.genre=? " + 
+				"GROUP BY r1.actor_id, r2.actor_id";
+		List<Adiacenza> adiacenze = new ArrayList<Adiacenza>();
+
+        
+		try {
+			Connection conn = DBConnect.getConnection();
+		
+			PreparedStatement st = conn.prepareStatement(sql);
+		    st.setString(1, genere);
+		    ResultSet res = st.executeQuery();
+		    while(res.next()) {
+		    	
+		    	adiacenze.add(new Adiacenza(idMap.get(res.getInt("r1.actor_id")),
+		    			                    idMap.get(res.getInt("r2.actor_id")), res.getInt("peso")));
+		    	
+		    }
+		    conn.close();
+		    return adiacenze;
+		    
+		}catch (SQLException e) {
+			e.printStackTrace();
+			return null;
+		}
 	}
 	
 	
