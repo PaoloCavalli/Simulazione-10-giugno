@@ -7,8 +7,11 @@ import java.util.Map;
 
 import org.jgrapht.Graph;
 import org.jgrapht.Graphs;
+import org.jgrapht.alg.connectivity.ConnectivityInspector;
+import org.jgrapht.graph.DefaultEdge;
 import org.jgrapht.graph.DefaultWeightedEdge;
 import org.jgrapht.graph.SimpleWeightedGraph;
+
 
 import it.polito.tdp.imdb.db.ImdbDAO;
 
@@ -48,11 +51,26 @@ public class Model {
 		return attori;
 	}
 	public int nVertici() {
-		return this.grafo.vertexSet().size();
-		}
+	return this.grafo.vertexSet().size();
+	}
 
-		public int nArchi() {
-		return this.grafo.edgeSet().size();
+	public int nArchi() {
+	return this.grafo.edgeSet().size();
+	}
+	
+	//PUNTO 1D
+	
+	public List<Actor> getAttoriConnessi(Actor sorgente){
+		if (grafo == null) {
+			throw new RuntimeException ("Grafo non esistente!");
 		}
+		
+		ConnectivityInspector<Actor, DefaultWeightedEdge> ci = new ConnectivityInspector<Actor, DefaultWeightedEdge> (grafo);
+		List<Actor> attoriConnessi = new ArrayList<>(ci.connectedSetOf(sorgente)); 
+		return attoriConnessi;
+		
+	}
+	
+		
 		
 }
